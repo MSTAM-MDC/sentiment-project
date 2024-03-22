@@ -4,12 +4,12 @@ import pickle
 # Define a function to load the model and apply the st.cache decorator
 @st.cache(allow_output_mutation=True)
 def load_model():
-    with open('finalized_model.pkl', 'rb') as file:
+    with open('finalized_model.pkl', 'wb') as file:
         model = pickle.load(file)
     return model
 
 # Load the pickled model
-with open('finalized_model.pkl', 'rb') as file:
+with open('finalized_model.pkl', 'wb') as file:
     model = pickle.load(file)
 
 st.title('NLP Sentiment Analysis')
