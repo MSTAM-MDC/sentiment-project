@@ -1,32 +1,29 @@
-import streamlit as st
+import streamlit as stmodel
 import pickle
-from nltk.stem import WordNetLemmatizer
-import re
 
-# Load the model from disk
-loaded_model = pickle.load(open('finalized_model.pkl', 'rb'))
+# Define a function to load the model and apply the st.cache decorator
+@st.cache(allow_output_mutation=True)
+def load_model():
+    with open('finalized_model.pkl', 'rb') as file:
+        model = pickle.load(file)
+    return model
 
-# Initialize the lemmatizer
-lemmatizer = WordNetLemmatizer()
+# Load the pickled model
+with open('finalized_model.pkl', 'rb') as file:
+    model = pickle.load(file)
 
-def clean_and_lemmatize(text):
-    words = re.sub(r"[^a-zA-Z]", " ", text).split()
-    return ' '.join([lemmatizer.lemmatize(word.lower()) for word in words])
+st.title('NLP Sentiment Analysis')
 
-def predict_sentiment(input_text):
-    cleaned_text = clean_and_lemmatize(input_text)
-    prediction = loaded_model.predict([cleaned_text])
-    return prediction[0]
+# User input
+user_input = st.text_area("Enter Text", "")
 
-# Set up the Streamlit interface
-st.title('Sentiment Analysis Model')
-user_input = st.text_area("Enter Text", "Type Here...")
+# Predict and display the result
 if st.button('Predict Sentiment'):
-    result = predict_sentiment(user_input)
-    if result == 1:
-        st.success('The sentiment is positive!')
+    prediction = model.predict([user_input])[0]
+    if prediction == 1:
+        st.write('Positive Sentiment')
     else:
-        st.error('The sentiment is negative or neutral.')
-
-# To run the app, use the following command:
-# streamlit run app.py
+        st.write('Negative Sentiment')
+tab1, tab2 = st.tabs(["About", "Why"])
+tab1.write("Sentiment analysis, also known as opinion mining, is the process of determining the sentiment or emotion expressed in a piece of text. It involves using natural language processing (NLP) techniques to analyze and classify subjective information as positive, negative, or neutral.")
+tab2.write("Sentiment analysis empowers businesses to make informed decisions, enhance customer experiences, and safeguard their brand reputation.")
